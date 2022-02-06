@@ -5,7 +5,6 @@ import {WebIfcHandler} from './handlers/WebIfcHandler';
 import {IfcState} from '../BaseDefinitions';
 import {WorkerStateHandler} from './handlers/WorkerStateHandler';
 import {ParserHandler} from './handlers/ParserHandler';
-import {BVH} from 'three/examples/jsm/loaders/BVHLoader';
 import {BvhManager} from '../components/BvhManager';
 import {IndexedDatabase} from "../indexedDB/IndexedDatabase";
 
