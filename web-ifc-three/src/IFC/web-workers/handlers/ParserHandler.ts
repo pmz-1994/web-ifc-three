@@ -1,4 +1,4 @@
-import {OptionalCategories, ParserAPI, ParserProgress } from '../../components/IFCParser';
+import { OptionalCategories, ParserAPI, ParserProgress } from '../../components/IFCParser';
 import { WorkerActions, WorkerAPIs } from '../BaseDefinitions';
 import { IFCWorkerHandler } from '../IFCWorkerHandler';
 import { IFCModel } from '../../components/IFCModel';
@@ -8,17 +8,17 @@ import { BvhManager } from '../../components/BvhManager';
 import { DBOperation, IndexedDatabase } from '../../indexedDB/IndexedDatabase';
 
 export class ParserHandler implements ParserAPI {
-
     API = WorkerAPIs.parser;
 
-    constructor(private handler: IFCWorkerHandler,
-                private serializer: Serializer,
-                private BVH: BvhManager,
-                private IDB: IndexedDatabase) {
-    }
+    constructor(
+        private handler: IFCWorkerHandler,
+        private serializer: Serializer,
+        private BVH: BvhManager,
+        private IDB: IndexedDatabase
+    ) {}
 
     async setupOptionalCategories(config: OptionalCategories) {
-        return this.handler.request(this.API, WorkerActions.setupOptionalCategories, {config});
+        return this.handler.request(this.API, WorkerActions.setupOptionalCategories, { config });
     }
 
     async parse(buffer: any, coordinationMatrix?: number[]): Promise<IFCModel> {
@@ -30,25 +30,21 @@ export class ParserHandler implements ParserAPI {
             // await this.getItems(result.modelID);
             return this.getModel();
         };
-        return this.handler.request(this.API, WorkerActions.parse, {buffer, coordinationMatrix});
+        return this.handler.request(this.API, WorkerActions.parse, { buffer, coordinationMatrix });
     }
 
-    getAndClearErrors(_modelId: number): void {
-    }
+    // WIP
+    // eslint-disable-next-line no-unused-vars
+    getAndClearErrors(_modelId: number): void {}
 
     private updateState(modelID: number) {
         this.handler.state.models[modelID] = {
-            modelID: modelID,
+            modelID,
             mesh: {} as any,
             types: {},
             jsonData: {}
         };
     }
-
-    // private async getItems(modelID: number) {
-    //     const items = await this.IDB.load(DBOperation.transferIndividualItems);
-    //     this.handler.state.models[modelID].items = this.serializer.reconstructGeometriesByMaterials(items);
-    // }
 
     private async getModel() {
         const serializedModel = await this.IDB.load(DBOperation.transferIfcModel);

@@ -1,32 +1,32 @@
-import { SerializedIfcGeometry } from '../BaseDefinitions';
 import { IfcGeometry as WebIfcIfcGeometry } from 'web-ifc';
+import { SerializedIfcGeometry } from '../BaseDefinitions';
 
 export class IfcGeometry implements WebIfcIfcGeometry {
-    private readonly _GetVertexData: number;
-    private readonly _GetVertexDataSize: number;
-    private readonly _GetIndexData: number;
-    private readonly _GetIndexDataSize: number;
+    private readonly vertexData: number;
+    private readonly vertexDataSize: number;
+    private readonly indexData: number;
+    private readonly indexDataSize: number;
 
     constructor(vector: SerializedIfcGeometry) {
-        this._GetVertexData = vector.GetVertexData;
-        this._GetVertexDataSize = vector.GetVertexDataSize;
-        this._GetIndexData = vector.GetIndexData;
-        this._GetIndexDataSize = vector.GetIndexDataSize;
+        this.vertexData = vector.GetVertexData;
+        this.vertexDataSize = vector.GetVertexDataSize;
+        this.indexData = vector.GetIndexData;
+        this.indexDataSize = vector.GetIndexDataSize;
     }
 
     GetVertexData() {
-        return this._GetVertexData;
+        return this.vertexData;
     }
 
     GetVertexDataSize() {
-        return this._GetVertexDataSize;
+        return this.vertexDataSize;
     }
 
     GetIndexData() {
-        return this._GetIndexData;
+        return this.indexData;
     }
 
     GetIndexDataSize() {
-        return this._GetIndexDataSize;
+        return this.indexDataSize;
     }
 }

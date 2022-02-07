@@ -27,9 +27,9 @@ class IFCLoader extends Loader {
         loader.setWithCredentials(scope.withCredentials);
         loader.load(
             url,
-            async function (buffer) {
+            async (buffer) => {
                 try {
-                    if (typeof buffer == 'string') {
+                    if (typeof buffer === 'string') {
                         throw new Error('IFC files must be given as a buffer!');
                     }
                     onLoad(await scope.parse(buffer));

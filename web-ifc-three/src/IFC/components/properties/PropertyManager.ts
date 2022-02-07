@@ -1,8 +1,6 @@
-import {
-    IdAttrName
-} from '../../BaseDefinitions';
-import { IfcState } from '../../BaseDefinitions';
 import { BufferGeometry } from 'three';
+import { IdAttrName, IfcState } from '../../BaseDefinitions';
+
 import { WebIfcPropertyManager } from './WebIfcPropertyManager';
 import { JSONPropertyManager } from './JSONPropertyManager';
 import { PropertyManagerAPI, PropertyAPI } from './BaseDefinitions';
@@ -55,7 +53,9 @@ export class PropertyManager implements PropertyManagerAPI {
     async getSpatialStructure(modelID: number, includeProperties?: boolean) {
         this.updateCurrentProps();
         if (!this.state.useJSON && includeProperties) {
-            console.warn('Including properties in getSpatialStructure with the JSON workflow disabled can lead to poor performance.');
+            console.warn(
+                'Including properties in getSpatialStructure with the JSON workflow disabled can lead to poor performance.'
+            );
         }
         return await this.currentProps.getSpatialStructure(modelID, includeProperties);
     }
@@ -63,5 +63,4 @@ export class PropertyManager implements PropertyManagerAPI {
     private updateCurrentProps() {
         this.currentProps = this.state.useJSON ? this.jsonProps : this.webIfcProps;
     }
-
 }

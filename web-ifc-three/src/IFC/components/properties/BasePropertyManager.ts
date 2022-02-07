@@ -1,9 +1,7 @@
 import { IfcState, pName, PropsNames, Node } from '../../BaseDefinitions';
 
 export class BasePropertyManager {
-
-    constructor(protected state: IfcState) {
-    }
+    constructor(protected state: IfcState) {}
 
     async getPropertySets(modelID: number, elementID: number, recursive = false) {
         return await this.getProperty(modelID, elementID, recursive, PropsNames.psets);
@@ -17,21 +15,32 @@ export class BasePropertyManager {
         return await this.getProperty(modelID, elementID, recursive, PropsNames.materials);
     }
 
-    protected async getSpatialNode(modelID: number, node: Node, treeChunks: any, includeProperties?: boolean) {
+    protected async getSpatialNode(
+        modelID: number,
+        node: Node,
+        treeChunks: any,
+        includeProperties?: boolean
+    ) {
         await this.getChildren(modelID, node, treeChunks, PropsNames.aggregates, includeProperties);
         await this.getChildren(modelID, node, treeChunks, PropsNames.spatial, includeProperties);
     }
 
-    protected async getChildren(modelID: number, node: Node, treeChunks: any, propNames: pName, includeProperties?: boolean) {
+    protected async getChildren(
+        modelID: number,
+        node: Node,
+        treeChunks: any,
+        propNames: pName,
+        includeProperties?: boolean
+    ) {
         const children = treeChunks[node.expressID];
         if (children == undefined) return;
         const prop = propNames.key as keyof Node;
         const nodes: any[] = [];
-        for(let i = 0; i < children.length; i++){
+        for (let i = 0; i < children.length; i++) {
             const child = children[i];
             let node = this.newNode(modelID, child);
             if (includeProperties) {
-                const properties = await this.getItemProperties(modelID, node.expressID) as any;
+                const properties = (await this.getItemProperties(modelID, node.expressID)) as any;
                 node = { ...properties, ...node };
             }
             await this.getSpatialNode(modelID, node, treeChunks, includeProperties);
@@ -89,15 +98,20 @@ export class BasePropertyManager {
         };
     }
 
-    async getProperty(modelID: number, elementID: number, recursive = false, propName: pName): Promise<any> {
-    }
+    async getProperty(
+        modelID: number,
+        elementID: number,
+        recursive = false,
+        propName: pName
+    ): Promise<any> {}
 
-    protected async getChunks(modelID: number, chunks: any, propNames: pName): Promise<void> {
-    }
+    protected async getChunks(modelID: number, chunks: any, propNames: pName): Promise<void> {}
 
-    protected async getItemProperties(modelID: number, expressID: number, recursive = false): Promise<any> {
-    }
+    protected async getItemProperties(
+        modelID: number,
+        expressID: number,
+        recursive = false
+    ): Promise<any> {}
 
-    protected getNodeType(modelID: number, id: number): any {
-    }
+    protected getNodeType(modelID: number, id: number): any {}
 }

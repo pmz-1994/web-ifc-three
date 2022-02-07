@@ -1,20 +1,19 @@
-import {IfcEventData, WorkerActions, WorkerAPIs} from './BaseDefinitions';
-import {Serializer} from './serializer/Serializer';
-import {PropertyHandler} from './handlers/PropertyHandler';
-import {WebIfcHandler} from './handlers/WebIfcHandler';
-import {IfcState} from '../BaseDefinitions';
-import {WorkerStateHandler} from './handlers/WorkerStateHandler';
-import {ParserHandler} from './handlers/ParserHandler';
-import {BvhManager} from '../components/BvhManager';
-import {IndexedDatabase} from "../indexedDB/IndexedDatabase";
+import { IfcEventData, WorkerActions, WorkerAPIs } from './BaseDefinitions';
+import { Serializer } from './serializer/Serializer';
+import { PropertyHandler } from './handlers/PropertyHandler';
+import { WebIfcHandler } from './handlers/WebIfcHandler';
+import { IfcState } from '../BaseDefinitions';
+import { WorkerStateHandler } from './handlers/WorkerStateHandler';
+import { ParserHandler } from './handlers/ParserHandler';
+import { BvhManager } from '../components/BvhManager';
+import { IndexedDatabase } from '../indexedDB/IndexedDatabase';
 
 export class IFCWorkerHandler {
-
     requestID = 0;
     rejectHandlers: any = {};
     resolveHandlers: any = {};
     serializeHandlers: any = {};
-    callbackHandlers: { [id: number]: { action: any, serializer: any } } = {};
+    callbackHandlers: { [id: number]: { action: any; serializer: any } } = {};
     onprogressHandlers: any = {};
 
     readonly IDB: IndexedDatabase;
@@ -39,7 +38,14 @@ export class IFCWorkerHandler {
     }
 
     request(worker: WorkerAPIs, action: WorkerActions, args?: any) {
-        const data: IfcEventData = {worker, action, args, id: this.requestID, result: undefined, onProgress: false};
+        const data: IfcEventData = {
+            worker,
+            action,
+            args,
+            id: this.requestID,
+            result: undefined,
+            onProgress: false
+        };
 
         return new Promise<any>((resolve, reject) => {
             this.resolveHandlers[this.requestID] = resolve;

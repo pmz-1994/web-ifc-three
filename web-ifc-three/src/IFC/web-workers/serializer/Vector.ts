@@ -1,21 +1,23 @@
-import { SerializedVector } from '../BaseDefinitions';
 import { Vector as WebIfcVector } from 'web-ifc';
+import { SerializedVector } from '../BaseDefinitions';
 
 export class Vector<T> implements WebIfcVector<T> {
-    private readonly _size: number;
-    private _data: { [key: number]: T } = {};
+    private readonly vectorSize: number;
+    private vectorData: { [key: number]: T } = {};
 
     constructor(vector: SerializedVector) {
-        this._size = vector.size;
-        const keys = Object.keys(vector).filter((key) => key.indexOf('size') === -1).map(key => parseInt(key));
-        keys.forEach((key) => this._data[key] = vector[key]);
+        this.vectorSize = vector.size;
+        const keys = Object.keys(vector)
+            .filter((key) => key.indexOf('size') === -1)
+            .map((key) => parseInt(key, 10));
+        keys.forEach((key) => (this.vectorData[key] = vector[key]));
     }
 
     size() {
-        return this._size;
+        return this.vectorSize;
     }
 
     get(index: number) {
-        return this._data[index];
+        return this.vectorData[index];
     }
 }

@@ -1,23 +1,27 @@
-import { BufferAttribute, BufferGeometry, Material, Matrix4, Mesh, Object3D } from 'three';
+import { Material, Matrix4, Mesh, Object3D } from 'three';
 // TODO: Remove ts ignore comments when @types/three gets updated
 // @ts-ignore
-import { mergeBufferGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils';
 import {
     FlatMesh,
     IfcGeometry,
-    IFCRELAGGREGATES, IFCRELASSOCIATESMATERIAL,
+    IFCRELAGGREGATES,
+    IFCRELASSOCIATESMATERIAL,
     IFCRELCONTAINEDINSPATIALSTRUCTURE,
     IFCRELDEFINESBYPROPERTIES,
-    IFCRELDEFINESBYTYPE, LoaderError, LoaderSettings, RawLineData, Vector
+    IFCRELDEFINESBYTYPE,
+    LoaderError,
+    LoaderSettings,
+    RawLineData,
+    Vector
 } from 'web-ifc';
-import {ParserProgress} from "./components/IFCParser";
+import { ParserProgress } from './components/IFCParser';
 
 export const IdAttrName = 'expressID';
 
 export type IdAttributeByMaterial = { [id: number]: number };
 export type IdAttributesByMaterials = { [materialID: string]: IdAttributeByMaterial };
 
-//TODO: Rename "scene" to "parent" in the next major release
+// TODO: Rename "scene" to "parent" in the next major release
 export interface BaseSubsetConfig {
     scene?: Object3D;
     ids: number[];
@@ -33,18 +37,14 @@ export interface SubsetConfig extends BaseSubsetConfig {
 
 export const DEFAULT = 'default';
 
-export type MapFaceindexID = { [key: number]: number };
+export type MapFaceIndexID = { [key: number]: number };
 
 export interface TypesMap {
     [key: number]: number;
 }
 
-
-export interface IfcModel {
+export interface IfcMesh extends Mesh {
     modelID: number;
-    mesh: IfcMesh;
-    types: TypesMap;
-    jsonData: { [id: number]: JSONObject };
 }
 
 export interface JSONObject {
@@ -53,23 +53,16 @@ export interface JSONObject {
     [key: string]: any;
 }
 
+export interface IfcModel {
+    modelID: number;
+    mesh: IfcMesh;
+    types: TypesMap;
+    jsonData: { [id: number]: JSONObject };
+}
+
 export interface Worker {
     active: boolean;
     path: string;
-}
-
-export interface IfcState {
-    models: { [modelID: number]: IfcModel };
-    api: WebIfcAPI;
-    useJSON: boolean;
-    worker: Worker;
-    webIfcSettings?: LoaderSettings;
-    onProgress?: (event: ParserProgress) => void;
-    coordinationMatrix?: Matrix4
-}
-
-export interface IfcMesh extends Mesh {
-    modelID: number;
 }
 
 export interface Node {
@@ -119,13 +112,11 @@ export const PropsNames = {
 };
 
 export interface WebIfcAPI {
-
     wasmModule: any;
-
-    Init(): void | Promise<void>;
-
     // To close the web worker
     Close?: () => void;
+
+    Init(): void | Promise<void>;
 
     /**
      * Opens a model and returns a modelID number
@@ -149,7 +140,7 @@ export interface WebIfcAPI {
      */
     GetGeometry(modelID: number, geometryExpressID: number): IfcGeometry | Promise<IfcGeometry>;
 
-    GetLine(modelID: number, expressID: number, flatten?: boolean):  any | Promise<any>;
+    GetLine(modelID: number, expressID: number, flatten?: boolean): any | Promise<any>;
 
     GetAndClearErrors(modelID: number): Vector<LoaderError> | Promise<Vector<LoaderError>>;
 
@@ -159,13 +150,16 @@ export interface WebIfcAPI {
 
     GetRawLineData(modelID: number, expressID: number): RawLineData | Promise<RawLineData>;
 
-    WriteRawLineData(modelID: number, data: RawLineData):  any | Promise<any>;
+    WriteRawLineData(modelID: number, data: RawLineData): any | Promise<any>;
 
     GetLineIDsWithType(modelID: number, type: number): Vector<number> | Promise<Vector<number>>;
 
     GetAllLines(modelID: Number): Vector<number> | Promise<Vector<number>>;
 
-    SetGeometryTransformation(modelID: number, transformationMatrix: Array<number>): void | Promise<void>;
+    SetGeometryTransformation(
+        modelID: number,
+        transformationMatrix: Array<number>
+    ): void | Promise<void>;
 
     GetCoordinationMatrix(modelID: number): Array<number> | Promise<Array<number>>;
 
@@ -183,7 +177,11 @@ export interface WebIfcAPI {
 
     StreamAllMeshes(modelID: number, meshCallback: (mesh: FlatMesh) => void): void | Promise<void>;
 
-    StreamAllMeshesWithTypes(modelID: number, types: Array<number>, meshCallback: (mesh: FlatMesh) => void): void | Promise<void>;
+    StreamAllMeshesWithTypes(
+        modelID: number,
+        types: Array<number>,
+        meshCallback: (mesh: FlatMesh) => void
+    ): void | Promise<void>;
 
     /**
      * Checks if a specific model ID is open or closed
@@ -204,4 +202,14 @@ export interface WebIfcAPI {
     GetFlatMesh(modelID: number, expressID: number): FlatMesh | Promise<FlatMesh>;
 
     SetWasmPath(path: string): void | Promise<void>;
+}
+
+export interface IfcState {
+    models: { [modelID: number]: IfcModel };
+    api: WebIfcAPI;
+    useJSON: boolean;
+    worker: Worker;
+    webIfcSettings?: LoaderSettings;
+    onProgress?: (event: ParserProgress) => void;
+    coordinationMatrix?: Matrix4;
 }

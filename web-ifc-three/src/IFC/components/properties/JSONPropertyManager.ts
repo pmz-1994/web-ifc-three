@@ -1,11 +1,10 @@
+import { IFCPROJECT } from 'web-ifc';
 import { IfcTypesMap } from '../IfcTypesMap';
 import { JSONObject, pName } from '../../BaseDefinitions';
 import { BasePropertyManager } from './BasePropertyManager';
-import { IFCPROJECT } from 'web-ifc';
 import { PropertyAPI } from './BaseDefinitions';
 
 export class JSONPropertyManager extends BasePropertyManager implements PropertyAPI {
-
     async getItemProperties(modelID: number, id: number, recursive = false) {
         return { ...this.state.models[modelID].jsonData[id] };
     }
@@ -28,11 +27,16 @@ export class JSONPropertyManager extends BasePropertyManager implements Property
         return this.filterItemsByType(data, typeName, verbose);
     }
 
-    override async getProperty(modelID: number, elementID: number, recursive = false, propName: pName) {
+    override async getProperty(
+        modelID: number,
+        elementID: number,
+        recursive = false,
+        propName: pName
+    ) {
         const resultIDs = await this.getAllRelatedItemsOfType(modelID, elementID, propName);
         const result = this.getItemsByID(modelID, resultIDs);
         if (recursive) {
-            result.forEach(result => this.getReferencesRecursively(modelID, result));
+            result.forEach((result) => this.getReferencesRecursively(modelID, result));
         }
         return result;
     }
@@ -43,14 +47,18 @@ export class JSONPropertyManager extends BasePropertyManager implements Property
 
     protected override async getChunks(modelID: number, chunks: any, propNames: pName) {
         const relation = await this.getAllItemsOfType(modelID, propNames.name, true);
-        relation.forEach(rel => {
+        relation.forEach((rel) => {
             this.saveChunk(chunks, propNames, rel);
         });
     }
 
-    private filterItemsByType(data: { [id: number]: JSONObject }, typeName: string, verbose: boolean) {
+    private filterItemsByType(
+        data: { [id: number]: JSONObject },
+        typeName: string,
+        verbose: boolean
+    ) {
         const result: any[] = [];
-        Object.keys(data).forEach(key => {
+        Object.keys(data).forEach((key) => {
             const numKey = parseInt(key);
             if (data[numKey].type.toUpperCase() === typeName) {
                 result.push(verbose ? { ...data[numKey] } : numKey);
@@ -62,7 +70,7 @@ export class JSONPropertyManager extends BasePropertyManager implements Property
     private async getAllRelatedItemsOfType(modelID: number, id: number, propNames: pName) {
         const lines = await this.getAllItemsOfType(modelID, propNames.name, true);
         const IDs: number[] = [];
-        lines.forEach(line => {
+        lines.forEach((line) => {
             const isRelated = JSONPropertyManager.isRelated(id, line, propNames);
             if (isRelated) this.getRelated(line, propNames, IDs);
         });
@@ -72,7 +80,7 @@ export class JSONPropertyManager extends BasePropertyManager implements Property
     private getItemsByID(modelID: number, ids: number[]) {
         const data = this.state.models[modelID].jsonData;
         const result: any[] = [];
-        ids.forEach(id => result.push({ ...data[id] }));
+        ids.forEach((id) => result.push({ ...data[id] }));
         return result;
     }
 

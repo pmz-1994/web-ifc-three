@@ -7,7 +7,6 @@ import {
     IFCOPENINGELEMENT,
     IFCPRODUCTDEFINITIONSHAPE
 } from 'web-ifc';
-import { IfcState, IfcMesh } from '../BaseDefinitions';
 import {
     Color,
     MeshLambertMaterial,
@@ -18,6 +17,7 @@ import {
     Mesh
 } from 'three';
 import { mergeBufferGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils';
+import { IfcState, IfcMesh } from '../BaseDefinitions';
 import { BvhManager } from './BvhManager';
 import { IFCModel } from './IFCModel';
 
@@ -27,7 +27,7 @@ export interface ParserProgress {
 }
 
 export interface OptionalCategories {
-    [category: number]: boolean
+    [category: number]: boolean;
 }
 
 export interface ParserAPI {
@@ -40,9 +40,9 @@ export interface ParserAPI {
 
 export interface GeometriesByMaterial {
     [materialID: string]: {
-        material: MeshLambertMaterial,
-        geometries: BufferGeometry[]
-    }
+        material: MeshLambertMaterial;
+        geometries: BufferGeometry[];
+    };
 }
 
 /**
@@ -62,7 +62,7 @@ export class IFCParser implements ParserAPI {
         total: 0,
         current: 0,
         step: 0.1
-    }
+    };
 
     // Represents the index of the model in webIfcAPI
     private currentWebIfcID = -1;
@@ -72,8 +72,7 @@ export class IFCParser implements ParserAPI {
 
     // BVH is optional because when using workers we have to apply it in the main thread,
     // once the model has been serialized and reconstructed
-    constructor(private state: IfcState, private BVH?: BvhManager) {
-    }
+    constructor(private state: IfcState, private BVH?: BvhManager) {}
 
     async setupOptionalCategories(config: OptionalCategories) {
         this.optionalCategories = config;
@@ -84,7 +83,10 @@ export class IFCParser implements ParserAPI {
         await this.newIfcModel(buffer);
         this.loadedModels++;
         if (coordinationMatrix) {
-            await this.state.api.SetGeometryTransformation(this.currentWebIfcID, coordinationMatrix);
+            await this.state.api.SetGeometryTransformation(
+                this.currentWebIfcID,
+                coordinationMatrix
+            );
         }
         return this.loadAllGeometry(this.currentWebIfcID);
     }
@@ -151,7 +153,7 @@ export class IFCParser implements ParserAPI {
 
     private updateLoadingState() {
         const realCurrentItem = Math.min(this.loadingState.current++, this.loadingState.total);
-        if(realCurrentItem / this.loadingState.total >= this.loadingState.step) {
+        if (realCurrentItem / this.loadingState.total >= this.loadingState.step) {
             const currentProgress = Math.ceil(this.loadingState.total * this.loadingState.step);
             this.notifyProgress(currentProgress, this.loadingState.total);
             this.loadingState.step += 0.1;
@@ -160,19 +162,22 @@ export class IFCParser implements ParserAPI {
 
     // Some categories (like IfcSpace and IfcOpeningElement) need to be set explicitly
     private addOptionalCategories(modelID: number) {
-
         const optionalTypes: number[] = [];
 
-        for (let key in this.optionalCategories) {
+        for (const key in this.optionalCategories) {
             if (this.optionalCategories.hasOwnProperty(key)) {
                 const category = parseInt(key);
                 if (this.optionalCategories[category]) optionalTypes.push(category);
             }
         }
 
-        this.state.api.StreamAllMeshesWithTypes(this.currentWebIfcID, optionalTypes, (mesh: FlatMesh) => {
-            this.streamMesh(modelID, mesh);
-        });
+        this.state.api.StreamAllMeshesWithTypes(
+            this.currentWebIfcID,
+            optionalTypes,
+            (mesh: FlatMesh) => {
+                this.streamMesh(modelID, mesh);
+            }
+        );
     }
 
     private streamMesh(modelID: number, mesh: FlatMesh) {
@@ -181,8 +186,8 @@ export class IFCParser implements ParserAPI {
 
         for (let i = 0; i < size; i++) {
             const placedGeometry = placedGeometries.get(i);
-            let itemMesh = this.getPlacedGeometry(modelID, mesh.expressID, placedGeometry);
-            let geom = itemMesh.geometry.applyMatrix4(itemMesh.matrix);
+            const itemMesh = this.getPlacedGeometry(modelID, mesh.expressID, placedGeometry);
+            const geom = itemMesh.geometry.applyMatrix4(itemMesh.matrix);
             this.storeGeometryByMaterial(placedGeometry.color, geom);
         }
     }
@@ -196,17 +201,26 @@ export class IFCParser implements ParserAPI {
     }
 
     private getBufferGeometry(modelID: number, expressID: number, placedGeometry: PlacedGeometry) {
-        const geometry = this.state.api.GetGeometry(modelID, placedGeometry.geometryExpressID) as IfcGeometry;
-        const verts = this.state.api.GetVertexArray(geometry.GetVertexData(), geometry.GetVertexDataSize()) as Float32Array;
-        const indices = this.state.api.GetIndexArray(geometry.GetIndexData(), geometry.GetIndexDataSize()) as Uint32Array;
+        const geometry = this.state.api.GetGeometry(
+            modelID,
+            placedGeometry.geometryExpressID
+        ) as IfcGeometry;
+        const verts = this.state.api.GetVertexArray(
+            geometry.GetVertexData(),
+            geometry.GetVertexDataSize()
+        ) as Float32Array;
+        const indices = this.state.api.GetIndexArray(
+            geometry.GetIndexData(),
+            geometry.GetIndexDataSize()
+        ) as Uint32Array;
         const buffer = this.ifcGeometryToBuffer(expressID, verts, indices);
-        //@ts-ignore
+        // @ts-ignore
         geometry.delete();
         return buffer;
     }
 
     private storeGeometryByMaterial(color: ifcColor, geometry: BufferGeometry) {
-        let colID = `${color.x}${color.y}${color.z}${color.w}`;
+        const colID = `${color.x}${color.y}${color.z}${color.w}`;
         if (this.geometriesByMaterials[colID]) {
             this.geometriesByMaterials[colID].geometries.push(geometry);
             return;
@@ -225,7 +239,11 @@ export class IFCParser implements ParserAPI {
         return mat;
     }
 
-    private ifcGeometryToBuffer(expressID: number, vertexData: Float32Array, indexData: Uint32Array) {
+    private ifcGeometryToBuffer(
+        expressID: number,
+        vertexData: Float32Array,
+        indexData: Uint32Array
+    ) {
         const geometry = new BufferGeometry();
 
         const posFloats = new Float32Array(vertexData.length / 2);
@@ -244,15 +262,9 @@ export class IFCParser implements ParserAPI {
             idAttribute[i / 6] = expressID;
         }
 
-        geometry.setAttribute(
-            'position',
-            new BufferAttribute(posFloats, 3));
-        geometry.setAttribute(
-            'normal',
-            new BufferAttribute(normFloats, 3));
-        geometry.setAttribute(
-            'expressID',
-            new BufferAttribute(idAttribute, 1));
+        geometry.setAttribute('position', new BufferAttribute(posFloats, 3));
+        geometry.setAttribute('normal', new BufferAttribute(normFloats, 3));
+        geometry.setAttribute('expressID', new BufferAttribute(idAttribute, 1));
 
         geometry.setIndex(new BufferAttribute(indexData, 1));
         return geometry;
@@ -260,11 +272,11 @@ export class IFCParser implements ParserAPI {
 
     // Three.js geometry has to be manually deallocated
     private cleanUpGeometryMemory(geometries: BufferGeometry[]) {
-        geometries.forEach(geometry => geometry.dispose());
+        geometries.forEach((geometry) => geometry.dispose());
 
         Object.keys(this.geometriesByMaterials).forEach((materialID) => {
             const geometriesByMaterial = this.geometriesByMaterials[materialID];
-            geometriesByMaterial.geometries.forEach(geometry => geometry.dispose());
+            geometriesByMaterial.geometries.forEach((geometry) => geometry.dispose());
             geometriesByMaterial.geometries = [];
             // @ts-ignore
             geometriesByMaterial.material = null;

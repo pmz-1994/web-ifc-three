@@ -14,15 +14,15 @@ export class BvhManager {
 
     applyThreeMeshBVH(geometry: BufferGeometry) {
         if (this.computeBoundsTree)
-            //@ts-ignore
+            // @ts-ignore
             geometry.computeBoundsTree();
     }
 
     private setupThreeMeshBVH() {
         if (!this.computeBoundsTree || !this.disposeBoundsTree || !this.acceleratedRaycast) return;
-        //@ts-ignore
+        // @ts-ignore
         BufferGeometry.prototype.computeBoundsTree = this.computeBoundsTree;
-        //@ts-ignore
+        // @ts-ignore
         BufferGeometry.prototype.disposeBoundsTree = this.disposeBoundsTree;
         Mesh.prototype.raycast = this.acceleratedRaycast;
     }

@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-classes-per-file
 import { Color, MeshLambertMaterial } from 'three';
 
 export class SerializedMaterial {
@@ -18,6 +19,6 @@ export class MaterialReconstructor {
             color: new Color(material.color[0], material.color[1], material.color[2]),
             opacity: material.opacity,
             transparent: material.transparent
-        })
+        });
     }
 }

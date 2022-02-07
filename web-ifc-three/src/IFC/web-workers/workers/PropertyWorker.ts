@@ -1,5 +1,6 @@
 import {
-    ErrorPropertiesNotAvailable, ErrorRootStateNotAvailable,
+    ErrorPropertiesNotAvailable,
+    ErrorRootStateNotAvailable,
     IfcEventData,
     IfcWorkerAPI,
     PropertyWorkerAPI,
@@ -11,8 +12,7 @@ export class PropertyWorker implements PropertyWorkerAPI {
     properties?: PropertyManager;
     API = WorkerAPIs.properties;
 
-    constructor(private worker: IfcWorkerAPI) {
-    }
+    constructor(private worker: IfcWorkerAPI) {}
 
     initializeProperties() {
         if (!this.properties) {
@@ -25,7 +25,11 @@ export class PropertyWorker implements PropertyWorkerAPI {
         this.initializeProperties();
         if (!this.properties) throw new Error(ErrorPropertiesNotAvailable);
         const args = data.args;
-        data.result = await this.properties.getAllItemsOfType(args.modelID, args.type, args.verbose);
+        data.result = await this.properties.getAllItemsOfType(
+            args.modelID,
+            args.type,
+            args.verbose
+        );
         this.worker.post(data);
     }
 
@@ -33,7 +37,11 @@ export class PropertyWorker implements PropertyWorkerAPI {
         this.initializeProperties();
         if (!this.properties) throw new Error(ErrorPropertiesNotAvailable);
         const args = data.args;
-        data.result = await this.properties.getItemProperties(args.modelID, args.elementID, args.recursive);
+        data.result = await this.properties.getItemProperties(
+            args.modelID,
+            args.elementID,
+            args.recursive
+        );
         this.worker.post(data);
     }
 
@@ -41,7 +49,11 @@ export class PropertyWorker implements PropertyWorkerAPI {
         this.initializeProperties();
         if (!this.properties) throw new Error(ErrorPropertiesNotAvailable);
         const args = data.args;
-        data.result = await this.properties.getMaterialsProperties(args.modelID, args.elementID, args.recursive);
+        data.result = await this.properties.getMaterialsProperties(
+            args.modelID,
+            args.elementID,
+            args.recursive
+        );
         this.worker.post(data);
     }
 
@@ -49,7 +61,11 @@ export class PropertyWorker implements PropertyWorkerAPI {
         this.initializeProperties();
         if (!this.properties) throw new Error(ErrorPropertiesNotAvailable);
         const args = data.args;
-        data.result = await this.properties.getPropertySets(args.modelID, args.elementID, args.recursive);
+        data.result = await this.properties.getPropertySets(
+            args.modelID,
+            args.elementID,
+            args.recursive
+        );
         this.worker.post(data);
     }
 
@@ -57,7 +73,10 @@ export class PropertyWorker implements PropertyWorkerAPI {
         this.initializeProperties();
         if (!this.properties) throw new Error(ErrorPropertiesNotAvailable);
         const args = data.args;
-        data.result = await this.properties.getSpatialStructure(args.modelID, args.includeProperties);
+        data.result = await this.properties.getSpatialStructure(
+            args.modelID,
+            args.includeProperties
+        );
         this.worker.post(data);
     }
 
@@ -65,7 +84,11 @@ export class PropertyWorker implements PropertyWorkerAPI {
         this.initializeProperties();
         if (!this.properties) throw new Error(ErrorPropertiesNotAvailable);
         const args = data.args;
-        data.result = await this.properties.getTypeProperties(args.modelID, args.elementID, args.recursive);
+        data.result = await this.properties.getTypeProperties(
+            args.modelID,
+            args.elementID,
+            args.recursive
+        );
         this.worker.post(data);
     }
 }

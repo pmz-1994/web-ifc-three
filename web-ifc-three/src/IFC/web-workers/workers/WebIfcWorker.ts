@@ -1,9 +1,8 @@
-import { IfcEventData, IfcWorkerAPI, WebIfcWorkerAPI, WorkerAPIs } from '../BaseDefinitions';
 import { IfcAPI } from 'web-ifc';
+import { IfcEventData, IfcWorkerAPI, WebIfcWorkerAPI, WorkerAPIs } from '../BaseDefinitions';
 import { Serializer } from '../serializer/Serializer';
 
 export class WebIfcWorker implements WebIfcWorkerAPI {
-
     webIFC: IfcAPI;
     API = WorkerAPIs.webIfc;
 
@@ -15,14 +14,14 @@ export class WebIfcWorker implements WebIfcWorkerAPI {
     async Init(data: IfcEventData) {
         await this.webIFC.Init();
         this.worker.post(data);
-    };
+    }
 
     async Close(data: IfcEventData) {
         this.nullifyWebIfc();
         this.webIFC = new IfcAPI();
         await this.webIFC.Init();
         this.worker.post(data);
-    };
+    }
 
     CloseModel(data: IfcEventData) {
         this.webIFC.CloseModel(data.args.modelID);

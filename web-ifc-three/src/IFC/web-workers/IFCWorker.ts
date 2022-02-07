@@ -7,13 +7,13 @@ import {
     WorkerAPIs,
     WorkerStateAPI
 } from './BaseDefinitions';
-import {Serializer} from './serializer/Serializer';
-import {WebIfcWorker} from './workers/WebIfcWorker';
-import {IfcState, WebIfcAPI} from '../BaseDefinitions';
-import {PropertyWorker} from './workers/PropertyWorker';
-import {StateWorker} from './workers/StateWorker';
-import {ParserWorker} from './workers/ParserWorker';
-import {IndexedDatabase} from "../indexedDB/IndexedDatabase";
+import { Serializer } from './serializer/Serializer';
+import { WebIfcWorker } from './workers/WebIfcWorker';
+import { IfcState, WebIfcAPI } from '../BaseDefinitions';
+import { PropertyWorker } from './workers/PropertyWorker';
+import { StateWorker } from './workers/StateWorker';
+import { ParserWorker } from './workers/ParserWorker';
+import { IndexedDatabase } from '../indexedDB/IndexedDatabase';
 
 class IFCWorker implements RootWorker {
     private readonly serializer = new Serializer();
@@ -23,7 +23,7 @@ class IFCWorker implements RootWorker {
     webIfc: WebIfcWorkerAPI;
     properties: PropertyWorkerAPI;
     parser: ParserWorker;
-    IDB: IndexedDatabase
+    IDB: IndexedDatabase;
 
     constructor() {
         this.IDB = new IndexedDatabase();
@@ -38,7 +38,7 @@ class IFCWorker implements RootWorker {
             models: [],
             api,
             useJSON: false,
-            worker: {active: false, path: ''}
+            worker: { active: false, path: '' }
         };
     }
 
@@ -55,14 +55,6 @@ class IFCWorker implements RootWorker {
 
 const ifcWorker = new IFCWorker();
 
-self.onmessage = async (event: MessageEvent) => {
-    const data = event.data as IfcEventData;
-    const {worker, action} = data;
-    checkRequestIsValid(worker, action);
-    const requestedWorker = ifcWorker[worker] as any;
-    requestedWorker[action](data);
-};
-
 function checkRequestIsValid(worker: WorkerAPIs, action: WorkerActions) {
     if (!ifcWorker[worker]) {
         throw new Error(`The worker ${worker} does not exist.`);
@@ -74,3 +66,11 @@ function checkRequestIsValid(worker: WorkerAPIs, action: WorkerActions) {
         throw new Error(`The action ${action} does not exist in the worker ${worker}.`);
     }
 }
+
+self.onmessage = async (event: MessageEvent) => {
+    const data = event.data as IfcEventData;
+    const { worker, action } = data;
+    checkRequestIsValid(worker, action);
+    const requestedWorker = ifcWorker[worker] as any;
+    requestedWorker[action](data);
+};

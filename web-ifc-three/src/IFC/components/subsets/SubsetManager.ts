@@ -1,7 +1,7 @@
 import { Material, Mesh, Object3D } from 'three';
 import { SubsetConfig, IfcState } from '../../BaseDefinitions';
 import { BvhManager } from '../BvhManager';
-import { IndexedGeometry, ItemsMap } from './ItemsMap';
+import { ItemsMap } from './ItemsMap';
 import { SubsetCreator } from './SubsetCreator';
 
 export interface Subset extends Mesh {
@@ -9,7 +9,7 @@ export interface Subset extends Mesh {
 }
 
 export type Subsets = {
-    [subsetID: string]: { ids: Set<number>, mesh: Subset, bvh: boolean };
+    [subsetID: string]: { ids: Set<number>; mesh: Subset; bvh: boolean };
 };
 
 /**
@@ -59,8 +59,8 @@ export class SubsetManager {
 
         const previousIDs = this.subsets[subsetID].ids;
         ids.forEach((id) => {
-            if(previousIDs.has(id)) previousIDs.delete(id);
-        })
+            if (previousIDs.has(id)) previousIDs.delete(id);
+        });
 
         return this.createSubset({
             modelID,

@@ -1,14 +1,14 @@
 import * as WebIFC from 'web-ifc';
+import { BufferGeometry, Material, Matrix4, Scene } from 'three';
+import { LoaderSettings } from 'web-ifc';
 import { IFCParser, ParserAPI, ParserProgress } from './IFCParser';
 import { SubsetManager } from './subsets/SubsetManager';
 import { PropertyManager } from './properties/PropertyManager';
 import { IfcElements } from './IFCElementsMap';
 import { TypeManager } from './TypeManager';
 import { SubsetConfig, IfcState, JSONObject } from '../BaseDefinitions';
-import {BufferGeometry, Material, Matrix4, Object3D, Scene} from 'three';
 import { IFCModel } from './IFCModel';
 import { BvhManager } from './BvhManager';
-import { LoaderSettings } from 'web-ifc';
 import { IFCWorkerHandler } from '../web-workers/IFCWorkerHandler';
 import { PropertyManagerAPI } from './properties/BaseDefinitions';
 
@@ -40,7 +40,10 @@ export class IFCManager {
     // SETUP - all the logic regarding the configuration of web-ifc-three
 
     async parse(buffer: ArrayBuffer) {
-        const model = await this.parser.parse(buffer, this.state.coordinationMatrix?.toArray()) as IFCModel;
+        const model = (await this.parser.parse(
+            buffer,
+            this.state.coordinationMatrix?.toArray()
+        )) as IFCModel;
         model.setIFCManager(this);
         this.state.useJSON ? await this.disposeMemory() : await this.types.getAllTypes(this.worker);
         // this.hider.processCoordinates(model.modelID);
@@ -82,19 +85,18 @@ export class IFCManager {
         this.state.onProgress = onProgress;
     }
 
-
     /**
      * Sets a coordination matrix to be applied when loading geometry.
      * @matrix THREE.Matrix4
      */
-    setupCoordinationMatrix(matrix: Matrix4){
+    setupCoordinationMatrix(matrix: Matrix4) {
         this.state.coordinationMatrix = matrix;
     }
 
     /**
      * Clears the coordination matrix that is applied when loading geometry.
      */
-    clearCoordinationMatrix(){
+    clearCoordinationMatrix() {
         delete this.state.coordinationMatrix;
     }
 

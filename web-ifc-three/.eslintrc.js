@@ -33,6 +33,10 @@ module.exports = {
         'no-console': 'off',
         'no-param-reassign': 'off',
         'eol-last': 'off',
+        'no-useless-constructor': 'off',
+        'no-empty-function': 'off',
+        'no-return-assign': 'off',
+        'no-restricted-globals': 'off',
         // 'no-unused-vars': 'off', // or "@typescript-eslint/no-unused-vars": "off",
         'unused-imports/no-unused-imports': 'error',
         'unused-imports/no-unused-vars': [

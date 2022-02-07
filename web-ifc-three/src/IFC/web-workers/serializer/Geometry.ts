@@ -1,12 +1,12 @@
+// eslint-disable-next-line max-classes-per-file
 import { BufferAttribute, BufferGeometry } from 'three';
-import { IFCModel } from '../../components/IFCModel';
 
 export class SerializedGeometry {
     position: ArrayLike<number>;
     normal: ArrayLike<number>;
     expressID: ArrayLike<number>;
     index: ArrayLike<number>;
-    groups: { start: number, count: number, materialIndex?: number }[];
+    groups: { start: number; count: number; materialIndex?: number }[];
 
     constructor(geometry: BufferGeometry) {
         this.position = geometry.attributes.position?.array || [];
@@ -29,7 +29,7 @@ export class GeometryReconstructor {
     }
 
     private static set(geom: BufferGeometry, name: string, data: ArrayLike<number>, size: number) {
-        if(data.length > 0) {
+        if (data.length > 0) {
             geom.setAttribute(name, new BufferAttribute(data, size));
         }
     }

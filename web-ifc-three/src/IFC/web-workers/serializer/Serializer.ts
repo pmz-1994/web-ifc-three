@@ -1,4 +1,8 @@
-import { Vector as WebIfcVector, IfcGeometry as WebIfcIfcGeometry, FlatMesh as WebIfcFlatMesh } from 'web-ifc';
+import {
+    Vector as WebIfcVector,
+    IfcGeometry as WebIfcIfcGeometry,
+    FlatMesh as WebIfcFlatMesh
+} from 'web-ifc';
 import { SerializedFlatMesh, SerializedIfcGeometry, SerializedVector } from '../BaseDefinitions';
 import { Vector } from './Vector';
 import { IfcGeometry } from './IfcGeometry';
@@ -8,7 +12,6 @@ import { IFCModel } from '../../components/IFCModel';
 import { MeshReconstructor, SerializedMesh } from './Mesh';
 
 export class Serializer {
-
     serializeVector<T>(vector: WebIfcVector<T>) {
         const size = vector.size();
         const serialized: SerializedVector = { size };

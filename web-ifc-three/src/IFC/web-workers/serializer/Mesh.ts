@@ -1,19 +1,19 @@
-import { IFCModel } from '../../components/IFCModel';
+// eslint-disable-next-line max-classes-per-file
 import { Material, MeshLambertMaterial } from 'three';
+import { IFCModel } from '../../components/IFCModel';
 import { MaterialReconstructor, SerializedMaterial } from './Material';
 import { GeometryReconstructor, SerializedGeometry } from './Geometry';
 
 export class SerializedMesh {
-
     modelID: number;
     geometry: SerializedGeometry;
-    materials: SerializedMaterial [] = [];
+    materials: SerializedMaterial[] = [];
 
     constructor(model: IFCModel) {
         this.modelID = model.modelID;
         this.geometry = new SerializedGeometry(model.geometry);
         if (Array.isArray(model.material)) {
-            model.material.forEach(mat => {
+            model.material.forEach((mat) => {
                 this.materials.push(new SerializedMaterial(mat as MeshLambertMaterial));
             });
         } else {
@@ -23,7 +23,6 @@ export class SerializedMesh {
 }
 
 export class MeshReconstructor {
-
     static new(serialized: SerializedMesh) {
         const model = new IFCModel();
         model.modelID = serialized.modelID;
@@ -35,7 +34,7 @@ export class MeshReconstructor {
     private static getMaterials(serialized: SerializedMesh, model: IFCModel) {
         model.material = [];
         const mats = model.material as Material[];
-        serialized.materials.forEach(mat => {
+        serialized.materials.forEach((mat) => {
             mats.push(MaterialReconstructor.new(mat));
         });
     }

@@ -12,7 +12,6 @@ export interface PropertyAPI {
     getMaterialsProperties(modelID: number, elementID: number, recursive: boolean): Promise<any[]>;
 
     getSpatialStructure(modelID: number, includeProperties?: boolean): Promise<any>;
-
 }
 
 export interface PropertyManagerAPI extends PropertyAPI {

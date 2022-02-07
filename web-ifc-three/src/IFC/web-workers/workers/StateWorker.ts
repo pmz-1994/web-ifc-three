@@ -9,11 +9,9 @@ import {
 } from '../BaseDefinitions';
 
 export class StateWorker implements WorkerStateAPI {
-
     API = WorkerAPIs.workerState;
 
-    constructor(private worker: IfcWorkerAPI) {
-    }
+    constructor(private worker: IfcWorkerAPI) {}
 
     updateStateUseJson(data: IfcEventData): void {
         if (!this.worker.state) throw new Error(ErrorRootStateNotAvailable);
@@ -45,9 +43,9 @@ export class StateWorker implements WorkerStateAPI {
         if (!this.worker.state) throw new Error(ErrorRootStateNotAvailable);
         const currentModel = this.getModel(data);
         const file = await fetch(data.args.path);
-        if(!file.ok) throw new Error(ErrorBadJsonPath);
+        if (!file.ok) throw new Error(ErrorBadJsonPath);
         const json = await file.json();
-        if(typeof json !== 'object') throw new Error(ErrorBadJson);
+        if (typeof json !== 'object') throw new Error(ErrorBadJson);
         currentModel.jsonData = json;
         this.worker.post(data);
     }
@@ -56,7 +54,12 @@ export class StateWorker implements WorkerStateAPI {
         if (!this.worker.state) throw new Error(ErrorRootStateNotAvailable);
         const modelID = data.args.modelID;
         if (!this.worker.state.models[modelID]) {
-            this.worker.state.models[modelID] = { modelID, mesh: {} as any, types: {}, jsonData: {} };
+            this.worker.state.models[modelID] = {
+                modelID,
+                mesh: {} as any,
+                types: {},
+                jsonData: {}
+            };
         }
         return this.worker.state.models[modelID];
     }

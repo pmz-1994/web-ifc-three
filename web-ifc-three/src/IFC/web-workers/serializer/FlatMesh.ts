@@ -1,5 +1,5 @@
-import { SerializedFlatMesh } from '../BaseDefinitions';
 import { FlatMesh as WebIfcFlatMesh, PlacedGeometry } from 'web-ifc';
+import { SerializedFlatMesh } from '../BaseDefinitions';
 import { Vector } from './Vector';
 import { Serializer } from './Serializer';
 

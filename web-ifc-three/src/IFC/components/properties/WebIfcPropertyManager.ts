@@ -1,10 +1,10 @@
-import { BasePropertyManager } from './BasePropertyManager';
 import { IFCPROJECT } from 'web-ifc';
+import { BasePropertyManager } from './BasePropertyManager';
 import { pName } from '../../BaseDefinitions';
 import { PropertyAPI } from './BaseDefinitions';
 import { IfcElements } from '../IFCElementsMap';
 
-export class WebIfcPropertyManager extends BasePropertyManager  implements PropertyAPI {
+export class WebIfcPropertyManager extends BasePropertyManager implements PropertyAPI {
     async getItemProperties(modelID: number, id: number, recursive = false) {
         return this.state.api.GetLine(modelID, id, recursive);
     }
@@ -19,7 +19,7 @@ export class WebIfcPropertyManager extends BasePropertyManager  implements Prope
     }
 
     async getAllItemsOfType(modelID: number, type: number, verbose: boolean) {
-        let items: number[] = [];
+        const items: number[] = [];
         const lines = await this.state.api.GetLineIDsWithType(modelID, type);
         for (let i = 0; i < lines.size(); i++) items.push(lines.get(i));
         if (!verbose) return items;
@@ -30,7 +30,12 @@ export class WebIfcPropertyManager extends BasePropertyManager  implements Prope
         return result;
     }
 
-    override async getProperty(modelID: number, elementID: number, recursive = false, propName: pName) {
+    override async getProperty(
+        modelID: number,
+        elementID: number,
+        recursive = false,
+        propName: pName
+    ) {
         const propSetIds = await this.getAllRelatedItemsOfType(modelID, elementID, propName);
         const result: any[] = [];
         for (let i = 0; i < propSetIds.length; i++) {

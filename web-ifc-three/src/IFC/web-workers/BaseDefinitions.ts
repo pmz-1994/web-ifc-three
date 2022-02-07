@@ -1,6 +1,4 @@
-import { SubsetConfig, IfcState, WebIfcAPI } from '../BaseDefinitions';
-import { BvhManager } from '../components/BvhManager';
-import { Material, Object3D } from 'three';
+import { IfcState, WebIfcAPI } from '../BaseDefinitions';
 
 export interface IfcWorkerAPI {
     post: (data: any) => void;
@@ -64,7 +62,7 @@ export enum WorkerAPIs {
     workerState = 'workerState',
     webIfc = 'webIfc',
     properties = 'properties',
-    parser = 'parser',
+    parser = 'parser'
 }
 
 export interface IfcEventData {

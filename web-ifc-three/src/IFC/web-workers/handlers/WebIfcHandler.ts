@@ -1,3 +1,4 @@
+import { FlatMesh, IfcGeometry, LoaderError, LoaderSettings, RawLineData, Vector } from 'web-ifc';
 import { WebIfcAPI } from '../../BaseDefinitions';
 import {
     SerializedFlatMesh,
@@ -6,17 +7,14 @@ import {
     WorkerActions,
     WorkerAPIs
 } from '../BaseDefinitions';
-import { FlatMesh, IfcGeometry, LoaderError, LoaderSettings, RawLineData, Vector } from 'web-ifc';
 import { IFCWorkerHandler } from '../IFCWorkerHandler';
 import { Serializer } from '../serializer/Serializer';
 
 export class WebIfcHandler implements WebIfcAPI {
-
     wasmModule: any;
     API = WorkerAPIs.webIfc;
 
-    constructor(private handler: IFCWorkerHandler, private serializer: Serializer) {
-    }
+    constructor(private handler: IFCWorkerHandler, private serializer: Serializer) {}
 
     async Init(): Promise<void> {
         this.wasmModule = true;
@@ -38,18 +36,25 @@ export class WebIfcHandler implements WebIfcAPI {
     async GetGeometry(modelID: number, geometryExpressID: number): Promise<IfcGeometry> {
         this.handler.serializeHandlers[this.handler.requestID] = (geom: SerializedIfcGeometry) => {
             return this.serializer.reconstructIfcGeometry(geom);
-        }
-        return this.handler.request(this.API, WorkerActions.GetGeometry, { modelID, geometryExpressID });
+        };
+        return this.handler.request(this.API, WorkerActions.GetGeometry, {
+            modelID,
+            geometryExpressID
+        });
     }
 
     async GetLine(modelID: number, expressID: number, flatten?: boolean): Promise<any> {
-        return this.handler.request(this.API, WorkerActions.GetLine, { modelID, expressID, flatten });
+        return this.handler.request(this.API, WorkerActions.GetLine, {
+            modelID,
+            expressID,
+            flatten
+        });
     }
 
     async GetAndClearErrors(modelID: number): Promise<Vector<LoaderError>> {
         this.handler.serializeHandlers[this.handler.requestID] = (vector: SerializedVector) => {
             return this.serializer.reconstructVector(vector);
-        }
+        };
         return this.handler.request(this.API, WorkerActions.GetAndClearErrors, { modelID });
     }
 
@@ -72,18 +77,21 @@ export class WebIfcHandler implements WebIfcAPI {
     async GetLineIDsWithType(modelID: number, type: number): Promise<Vector<number>> {
         this.handler.serializeHandlers[this.handler.requestID] = (vector: SerializedVector) => {
             return this.serializer.reconstructVector(vector);
-        }
+        };
         return this.handler.request(this.API, WorkerActions.GetLineIDsWithType, { modelID, type });
     }
 
     async GetAllLines(modelID: number): Promise<Vector<number>> {
         this.handler.serializeHandlers[this.handler.requestID] = (vector: SerializedVector) => {
             return this.serializer.reconstructVector(vector);
-        }
+        };
         return this.handler.request(this.API, WorkerActions.GetAllLines, { modelID });
     }
 
-    async SetGeometryTransformation(modelID: number, transformationMatrix: number[]): Promise<void> {
+    async SetGeometryTransformation(
+        modelID: number,
+        transformationMatrix: number[]
+    ): Promise<void> {
         return this.handler.request(this.API, WorkerActions.SetGeometryTransformation, {
             modelID,
             transformationMatrix
@@ -103,7 +111,11 @@ export class WebIfcHandler implements WebIfcAPI {
     }
 
     async getSubArray(heap: any, startPtr: any, sizeBytes: any): Promise<any> {
-        return this.handler.request(this.API, WorkerActions.getSubArray, { heap, startPtr, sizeBytes });
+        return this.handler.request(this.API, WorkerActions.getSubArray, {
+            heap,
+            startPtr,
+            sizeBytes
+        });
     }
 
     async CloseModel(modelID: number): Promise<void> {
@@ -118,12 +130,19 @@ export class WebIfcHandler implements WebIfcAPI {
         return this.handler.request(this.API, WorkerActions.StreamAllMeshes, { modelID });
     }
 
-    async StreamAllMeshesWithTypes(modelID: number, types: number[], meshCallback: (mesh: FlatMesh) => void): Promise<void> {
+    async StreamAllMeshesWithTypes(
+        modelID: number,
+        types: number[],
+        meshCallback: (mesh: FlatMesh) => void
+    ): Promise<void> {
         this.handler.callbackHandlers[this.handler.requestID] = {
             action: meshCallback,
             serializer: this.serializer.reconstructFlatMesh
         };
-        return this.handler.request(this.API, WorkerActions.StreamAllMeshesWithTypes, { modelID, types });
+        return this.handler.request(this.API, WorkerActions.StreamAllMeshesWithTypes, {
+            modelID,
+            types
+        });
     }
 
     async IsModelOpen(modelID: number): Promise<boolean> {
@@ -133,14 +152,14 @@ export class WebIfcHandler implements WebIfcAPI {
     async LoadAllGeometry(modelID: number): Promise<Vector<FlatMesh>> {
         this.handler.serializeHandlers[this.handler.requestID] = (vector: SerializedVector) => {
             return this.serializer.reconstructFlatMeshVector(vector);
-        }
+        };
         return this.handler.request(this.API, WorkerActions.LoadAllGeometry, { modelID });
     }
 
     async GetFlatMesh(modelID: number, expressID: number): Promise<FlatMesh> {
         this.handler.serializeHandlers[this.handler.requestID] = (flatMesh: SerializedFlatMesh) => {
             return this.serializer.reconstructFlatMesh(flatMesh);
-        }
+        };
         return this.handler.request(this.API, WorkerActions.GetFlatMesh, { modelID, expressID });
     }
 

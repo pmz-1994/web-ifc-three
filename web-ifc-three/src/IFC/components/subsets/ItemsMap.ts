@@ -1,9 +1,9 @@
-import { IfcState } from '../../BaseDefinitions';
 import { BufferAttribute, BufferGeometry, Material } from 'three';
+import { IfcState } from '../../BaseDefinitions';
 
 // The number array has the meaning: [start, end, start, end, start, end...]
 export interface Indices {
-    [materialID: number]: number[]
+    [materialID: number]: number[];
 }
 
 export interface IndexedGeometry extends BufferGeometry {
@@ -11,27 +11,25 @@ export interface IndexedGeometry extends BufferGeometry {
 }
 
 export interface Group {
-    start: number,
-    count: number,
-    materialIndex?: number
+    start: number;
+    count: number;
+    materialIndex?: number;
 }
 
 export interface Items {
-    indexCache: Uint32Array,
-    map: Map<number, Indices>
+    indexCache: Uint32Array;
+    map: Map<number, Indices>;
 }
 
 export interface IndicesMap {
     [modelID: number]: {
         indexCache: Uint32Array;
         map: Map<number, Indices>;
-    }
+    };
 }
 
 export class ItemsMap {
-
-    constructor(private state: IfcState) {
-    }
+    constructor(private state: IfcState) {}
 
     map: IndicesMap = {};
 
@@ -124,5 +122,4 @@ export class ItemsMap {
         }
         return storedIfcItem[matIndex];
     }
-
 }
