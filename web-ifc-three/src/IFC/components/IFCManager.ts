@@ -45,7 +45,11 @@ export class IFCManager {
             this.state.coordinationMatrix?.toArray()
         )) as IFCModel;
         model.setIFCManager(this);
-        this.state.useJSON ? await this.disposeMemory() : await this.types.getAllTypes(this.worker);
+        if (this.state.useJSON) {
+            await this.disposeMemory();
+        } else {
+            await this.types.getAllTypes(this.worker);
+        }
         // this.hider.processCoordinates(model.modelID);
         return model;
     }

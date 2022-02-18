@@ -7,5 +7,5 @@ echo "🐶 - First, let me clean up your code..."
 #yarn lint-apply
 echo "🐶 - Awesome! Now, let's run all tests..."
 #yarn test
-echo "🐶 - Horray! All tests passed!"
-echo "🐶 - This commit looks cool 👌"
+#echo "🐶 - Horray! All tests passed!"
+#echo "🐶 - This commit looks cool 👌"

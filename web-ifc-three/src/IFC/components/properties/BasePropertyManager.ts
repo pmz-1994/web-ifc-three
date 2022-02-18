@@ -4,15 +4,15 @@ export class BasePropertyManager {
     constructor(protected state: IfcState) {}
 
     async getPropertySets(modelID: number, elementID: number, recursive = false) {
-        return await this.getProperty(modelID, elementID, recursive, PropsNames.psets);
+        return this.getProperty(modelID, elementID, recursive, PropsNames.psets);
     }
 
     async getTypeProperties(modelID: number, elementID: number, recursive = false) {
-        return await this.getProperty(modelID, elementID, recursive, PropsNames.type);
+        return this.getProperty(modelID, elementID, recursive, PropsNames.type);
     }
 
     async getMaterialsProperties(modelID: number, elementID: number, recursive = false) {
-        return await this.getProperty(modelID, elementID, recursive, PropsNames.materials);
+        return this.getProperty(modelID, elementID, recursive, PropsNames.materials);
     }
 
     protected async getSpatialNode(
@@ -33,18 +33,21 @@ export class BasePropertyManager {
         includeProperties?: boolean
     ) {
         const children = treeChunks[node.expressID];
-        if (children == undefined) return;
+        if (children === undefined) return;
         const prop = propNames.key as keyof Node;
         const nodes: any[] = [];
         for (let i = 0; i < children.length; i++) {
             const child = children[i];
-            let node = this.newNode(modelID, child);
+            let newNode = this.newNode(modelID, child);
             if (includeProperties) {
-                const properties = (await this.getItemProperties(modelID, node.expressID)) as any;
-                node = { ...properties, ...node };
+                const properties = (await this.getItemProperties(
+                    modelID,
+                    newNode.expressID
+                )) as any;
+                newNode = { ...properties, ...newNode };
             }
-            await this.getSpatialNode(modelID, node, treeChunks, includeProperties);
-            nodes.push(node);
+            await this.getSpatialNode(modelID, newNode, treeChunks, includeProperties);
+            nodes.push(newNode);
         }
         (node[prop] as Node[]) = nodes;
     }
@@ -68,7 +71,7 @@ export class BasePropertyManager {
     protected saveChunk(chunks: any, propNames: pName, rel: any) {
         const relating = rel[propNames.relating].value;
         const related = rel[propNames.related].map((r: any) => r.value);
-        if (chunks[relating] == undefined) {
+        if (chunks[relating] === undefined) {
             chunks[relating] = related;
         } else {
             chunks[relating] = chunks[relating].concat(related);

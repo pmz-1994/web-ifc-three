@@ -37,6 +37,9 @@ module.exports = {
         'no-empty-function': 'off',
         'no-return-assign': 'off',
         'no-restricted-globals': 'off',
+        'no-restricted-syntax': 'off',
+        'no-prototype-builtins': 'off',
+        'no-await-in-loop': 'off',
         // 'no-unused-vars': 'off', // or "@typescript-eslint/no-unused-vars": "off",
         'unused-imports/no-unused-imports': 'error',
         'unused-imports/no-unused-vars': [

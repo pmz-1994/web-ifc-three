@@ -33,7 +33,8 @@ export interface OptionalCategories {
 export interface ParserAPI {
     parse(buffer: any, coordinationMatrix?: number[]): Promise<IFCModel>;
 
-    getAndClearErrors(_modelId: number): void;
+    // WIP
+    // getAndClearErrors(_modelId: number): void;
 
     setupOptionalCategories(config: OptionalCategories): void;
 }
@@ -91,9 +92,10 @@ export class IFCParser implements ParserAPI {
         return this.loadAllGeometry(this.currentWebIfcID);
     }
 
-    getAndClearErrors(_modelId: number) {
-        // return this.state.api.GetAndClearErrors(modelId);
-    }
+    // WIP
+    // getAndClearErrors(_modelId: number) {
+    // return this.state.api.GetAndClearErrors(modelId);
+    // }
 
     private notifyProgress(loaded: number, total: number) {
         if (this.state.onProgress) this.state.onProgress({ loaded, total });
@@ -166,7 +168,7 @@ export class IFCParser implements ParserAPI {
 
         for (const key in this.optionalCategories) {
             if (this.optionalCategories.hasOwnProperty(key)) {
-                const category = parseInt(key);
+                const category = parseInt(key, 10);
                 if (this.optionalCategories[category]) optionalTypes.push(category);
             }
         }
@@ -195,8 +197,9 @@ export class IFCParser implements ParserAPI {
     private getPlacedGeometry(modelID: number, expressID: number, placedGeometry: PlacedGeometry) {
         const geometry = this.getBufferGeometry(modelID, expressID, placedGeometry);
         const mesh = new Mesh(geometry);
-        mesh.matrix = this.getMeshMatrix(placedGeometry.flatTransformation);
+        mesh.matrix = IFCParser.getMeshMatrix(placedGeometry.flatTransformation);
         mesh.matrixAutoUpdate = false;
+
         return mesh;
     }
 
@@ -205,7 +208,7 @@ export class IFCParser implements ParserAPI {
             modelID,
             placedGeometry.geometryExpressID
         ) as IfcGeometry;
-        const verts = this.state.api.GetVertexArray(
+        const vertices = this.state.api.GetVertexArray(
             geometry.GetVertexData(),
             geometry.GetVertexDataSize()
         ) as Float32Array;
@@ -213,7 +216,7 @@ export class IFCParser implements ParserAPI {
             geometry.GetIndexData(),
             geometry.GetIndexDataSize()
         ) as Uint32Array;
-        const buffer = this.ifcGeometryToBuffer(expressID, verts, indices);
+        const buffer = IFCParser.ifcGeometryToBuffer(expressID, vertices, indices);
         // @ts-ignore
         geometry.delete();
         return buffer;
@@ -233,13 +236,13 @@ export class IFCParser implements ParserAPI {
         this.geometriesByMaterials[colID] = { material, geometries: [geometry] };
     }
 
-    private getMeshMatrix(matrix: Array<number>) {
+    private static getMeshMatrix(matrix: Array<number>) {
         const mat = new Matrix4();
         mat.fromArray(matrix);
         return mat;
     }
 
-    private ifcGeometryToBuffer(
+    private static ifcGeometryToBuffer(
         expressID: number,
         vertexData: Float32Array,
         indexData: Uint32Array
