@@ -13,8 +13,9 @@ import { IFCWorkerHandler } from '../web-workers/IFCWorkerHandler';
 import { PropertyManagerAPI } from './properties/BaseDefinitions';
 import { MemoryCleaner } from './MemoryCleaner';
 import { IFCUtils } from './IFCUtils';
-import {Data} from './sequence/Data'
+import { Data } from './sequence/Data'
 import { IfcTypesMap } from './IfcTypesMap';
+import {FragmentParser} from "./fragment/FragmentParser";
 
 /**
  * Contains all the logic to work with the loaded IFC files (select, edit, etc).
@@ -31,10 +32,14 @@ export class IFCManager {
     typesMap: {[key: number]: string} = IfcTypesMap;
     parser: ParserAPI = new IFCParser(this.state, this.BVH);
     subsets = new SubsetManager(this.state, this.BVH);
-    utils = new IFCUtils(this.state)
-    sequenceData = new Data(this.state)
-    private properties: PropertyManagerAPI = new PropertyManager(this.state);
-    private types = new TypeManager(this.state);
+    utils = new IFCUtils(this.state);
+    sequenceData = new Data(this.state);
+    properties: PropertyManagerAPI = new PropertyManager(this.state);
+    types = new TypeManager(this.state);
+
+    fragments = new FragmentParser(this.state, this.properties, this.types, this.BVH);
+    useFragments = false;
+
     private cleaner = new MemoryCleaner(this.state);
     private worker?: IFCWorkerHandler;
 
@@ -48,7 +53,12 @@ export class IFCManager {
     // SETUP - all the logic regarding the configuration of web-ifc-three
 
     async parse(buffer: ArrayBuffer) {
-        const model = await this.parser.parse(buffer, this.state.coordinationMatrix?.toArray()) as IFCModel;
+        let model: IFCModel;
+        if(this.useFragments) {
+            model = await this.fragments.parse(buffer, this.state.coordinationMatrix?.toArray()) as IFCModel;
+        } else {
+            model = await this.parser.parse(buffer, this.state.coordinationMatrix?.toArray()) as IFCModel;
+        }
         model.setIFCManager(this);
         // this.state.useJSON ? await this.disposeMemory() : await this.types.getAllTypes(this.worker);
         await this.types.getAllTypes(this.worker);
@@ -354,12 +364,12 @@ export class IFCManager {
     * Returns the IFC class name of an instance if the optional parameter is not provided.
     * If an entit class is provided, it will check if an instance belongs to the class.
     * @modelID ID of the IFC model.
-    * @entityClass IFC Class name. 
+    * @entityClass IFC Class name.
     */
     async isA(entity: any, entity_class: string) {
         return this.utils.isA(entity, entity_class);
     }
-    
+
     async getSequenceData(modelID: number) {
         await this.sequenceData.load(modelID);
         return this.sequenceData;
@@ -370,7 +380,7 @@ export class IFCManager {
     * Returns the IFC objects filtered by IFC Type and wrapped with the entity_instance class.
     * If an IFC type class has subclasses, all entities of those subclasses are also returned.
     * @modelID ID of the IFC model.
-    * @entityClass IFC Class name. 
+    * @entityClass IFC Class name.
     */
     async byType(modelID: number, entityClass: string) {
         return this.utils.byType(modelID, entityClass);
@@ -389,7 +399,7 @@ export class IFCManager {
     * Returns the IFC objects filtered by IFC Type and wrapped with the entity_instance class.
     * If an IFC type class has subclasses, all entities of those subclasses are also returned.
     * @modelID ID of the IFC model.
-    * @entityClass IFC Class name. 
+    * @entityClass IFC Class name.
     */
     async idsByType(modelID: number, entityClass: string) {
         return this.utils.idsByType(modelID, entityClass);
